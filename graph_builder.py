@@ -12,17 +12,20 @@ def read_nodes(graph):
             for line in f:
                 op = json.loads(line.decode())
                 print(op)
-                graph.add_node(op['value']['new_account_name'],
-                                creation_date = op['timestamp'],
-                                rewards_steem= 0,
-                                rewards_sbd=0,
-                                rewards_vests=0, 
-                                last_reward = '',
-                                posts=0, 
-                                votes=0, 
-                                resteems=0, 
-                                comments=0, 
-                                pow=0 )
+                try:
+                    graph.add_node(op['value']['new_account_name'],
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
+                except KeyError:
+                    pass
                                 
     os.chdir('../account_create_with_delegation_operation')
     n_file = os.listdir(".")
@@ -30,17 +33,20 @@ def read_nodes(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                graph.add_node(op['value']['new_account_name'],
-                                creation_date = op['timestamp'],
-                                rewards_steem= 0,
-                                rewards_sbd=0,
-                                rewards_vests=0, 
-                                last_reward = '',
-                                posts=0, 
-                                votes=0, 
-                                resteems=0, 
-                                comments=0, 
-                                pow=0)
+                try:
+                    graph.add_node(op['value']['new_account_name'],
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
+                except KeyError:
+                    pass
 
     os.chdir('../create_claimed_account_operation')
     n_file = os.listdir(".")
@@ -48,17 +54,20 @@ def read_nodes(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                graph.add_node(op['value']['new_account_name'],
-                                creation_date = op['timestamp'],
-                                rewards_steem= 0,
-                                rewards_sbd=0,
-                                rewards_vests=0, 
-                                last_reward = '',
-                                posts=0, 
-                                votes=0, 
-                                resteems=0, 
-                                comments=0, 
-                                pow=0 )
+                try:
+                    graph.add_node(op['value']['new_account_name'],
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
+                except KeyError:
+                    pass
     os.chdir('..')
     return graph
 
