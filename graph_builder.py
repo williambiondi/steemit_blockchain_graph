@@ -80,7 +80,10 @@ def read_links(graph):
             for line in f:
                 op = json.loads(line.decode())
                 print(op)
-                cj = json.loads(op['value']['json'])
+                try:
+                    cj = json.loads(op['value']['json'])
+                except TypeError:
+                    cj = op['value']['json']
                 if op['value']['id'] == 'follow':
                     try:
                         graph.add_edge(cj['follower'],cj['following'], timestamp = op['timestamp'])
