@@ -88,8 +88,8 @@ def read_links(graph):
                         pass
                     except TypeError:
                         try:
-                            json = json.loads(cj[1])
-                            graph.add_edge(json['follower'],json['following'], timestamp = op['timestamp'])
+                            c_json = json.loads(cj[1])
+                            graph.add_edge(c_json['follower'],c_json['following'], timestamp = op['timestamp'])
                         except KeyError:
                             pass
                 else:
