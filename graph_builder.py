@@ -6,10 +6,12 @@ import gzip
 def read_nodes(graph):
     os.chdir('account_create_operation')
     n_file = os.listdir(".")
+    print('read_nodes')
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 graph.add_node(op['value']['new_account_name'],
                                 creation_date = op['timestamp'],
                                 rewards_steem= 0,
@@ -61,12 +63,14 @@ def read_nodes(graph):
     return graph
 
 def read_links(graph):
+    print('read_links')
     os.chdir('custom_json_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 cj = op['value']['json']
                 if op['value']['id'] == 'follow':
                     try:
@@ -81,12 +85,14 @@ def read_links(graph):
 
 
 def read_rewards(graph):
+    print('read_rewards')
     os.chdir('claim_reward_balance_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 reward = op['value']
                 try:
                     graph[reward['account']]['rewards_steem'] += reward['reward_steem']['amount']
@@ -99,12 +105,14 @@ def read_rewards(graph):
     return graph
 
 def read_comments(graph):
+    print('read_comments')
     os.chdir('comment_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 comment = op['value']
                 try:
                     graph[comment['author']]['comments'] += 1
@@ -114,12 +122,14 @@ def read_comments(graph):
     return graph
 
 def read_posts(graph):
+    print('read_posts')
     os.chdir('feed_publish_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 info_post = op['value']
                 try:
                     graph[info_post['publisher']]['posts'] += 1
