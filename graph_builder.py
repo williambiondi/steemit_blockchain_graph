@@ -86,6 +86,12 @@ def read_links(graph):
                         graph.add_edge(cj['follower'],cj['following'], timestamp = op['timestamp'])
                     except KeyError:
                         pass
+                    except TypeError:
+                        try:
+                            json = json.loads(cj[1])
+                            graph.add_edge(json['follower'],json['following'], timestamp = op['timestamp'])
+                        except KeyError:
+                            pass
                 else:
                     continue
     os.chdir('..')
@@ -148,12 +154,14 @@ def read_posts(graph):
     return graph
 
 def read_votes(graph):
+    print('read_votes')
     os.chdir('vote_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 vote = op['value']
                 try:
                     graph[vote['voter']]['votes'] += 1
@@ -163,12 +171,14 @@ def read_votes(graph):
     return graph
 
 def read_pow(graph):
+    print('read_pow')
     os.chdir('pow_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 work = op['value']
                 try:
                     graph[work['worker_account']]['pow'] += 1
@@ -181,6 +191,7 @@ def read_pow(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
+                print(op)
                 work = op['value']['work']['value']['input']
                 try:
                     graph[work['worker_account']]['pow'] += 1
