@@ -3,6 +3,7 @@ import networkx as nx
 import os
 import gzip
 import time
+import pickle 
 
 def monitor_elapsed_time(func):
     def wrapper(*args, **kwargs):
@@ -219,5 +220,5 @@ graph = read_posts(graph)
 graph = read_pow(graph)
 graph = read_rewards(graph)
 graph = read_votes(graph)
-os.chdir('../../steemit_blockchain_graph')
-nx.write_gexf(graph, 'blockchain_graph.gexf')
+os.chdir('../steemit_blockchain_graph')
+nx.write_gpickle(graph, 'blockchain_graph.gpickle')
