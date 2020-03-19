@@ -86,7 +86,7 @@ def read_links(graph):
 
 @monitor_elapsed_time
 def read_rewards(graph):
-    rewards = np.zeros(len(graph.order()))
+    rewards = np.zeros(graph.order())
     nx.set_node_attributes(graph, 'rewards_steem', rewards)
     nx.set_node_attributes(graph, 'rewards_sbd', rewards)
     nx.set_node_attributes(graph, 'rewards_vests', rewards)
@@ -112,7 +112,7 @@ def read_rewards(graph):
 
 @monitor_elapsed_time
 def read_comments(graph):
-    comments = np.zeros(len(graph.order()))
+    comments = np.zeros(graph.order())
     nx.set_node_attributes(graph, 'comments', comments)
     os.chdir('comment_operation')
     n_file = os.listdir(".")
@@ -131,7 +131,7 @@ def read_comments(graph):
 
 @monitor_elapsed_time
 def read_posts(graph):
-    posts = np.zeros(len(graph.order()))
+    posts = np.zeros(graph.order())
     nx.set_node_attributes(graph, 'posts', posts)
     os.chdir('feed_publish_operation')
     n_file = os.listdir(".")
@@ -150,7 +150,7 @@ def read_posts(graph):
 
 @monitor_elapsed_time
 def read_votes(graph):
-    votes = np.zeros(len(graph.order()))
+    votes = np.zeros(graph.order())
     nx.set_node_attributes(graph, 'votes', votes)
     os.chdir('vote_operation')
     n_file = os.listdir(".")
@@ -169,7 +169,7 @@ def read_votes(graph):
 
 @monitor_elapsed_time
 def read_pow(graph):
-    pow = np.zeros(len(graph.order()))
+    pow = np.zeros(graph.order())
     nx.set_node_attributes(graph, 'pow', pow)
     os.chdir('pow_operation')
     n_file = os.listdir(".")
