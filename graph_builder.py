@@ -25,10 +25,18 @@ def read_nodes(graph):
                 op = json.loads(line.decode())
                 try:
                     graph.add_node(op['value']['new_account_name'],
-                                    creation_date = op['timestamp'])
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
                 except KeyError:
-                    pass
-                                
+                    pass              
     os.chdir('../account_create_with_delegation_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -37,7 +45,16 @@ def read_nodes(graph):
                 op = json.loads(line.decode())
                 try:
                     graph.add_node(op['value']['new_account_name'],
-                                    creation_date = op['timestamp'])
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
                 except KeyError:
                     pass
 
@@ -49,11 +66,26 @@ def read_nodes(graph):
                 op = json.loads(line.decode())
                 try:
                     graph.add_node(op['value']['new_account_name'],
-                                    creation_date = op['timestamp'])
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
                 except KeyError:
                     pass
     os.chdir('..')
     return graph
+
+def check_node(graph, node):
+    if node in graph.nodes:
+        return True
+    else:
+        return False
 
 @monitor_elapsed_time
 def read_links(graph):
@@ -63,14 +95,38 @@ def read_links(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                
                 if op['value']['id'] == 'follow':
                     try:
                         cj = json.loads(op['value']['json'])
                     except TypeError:   
                         cj = op['value']['json']
                     try:
-                        graph.add_edge(cj['follower'],cj['following'], timestamp = op['timestamp'])
+                        if check_node(graph, cj['follower']) and check_node(graph, cj['following']):
+                            graph.add_edge(cj['follower'],cj['following'], timestamp = op['timestamp'])
+                        else:
+                            graph.add_node(cj['follower'],
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
+                            graph.add_node(cj['following'],
+                                    creation_date = op['timestamp'],
+                                    rewards_steem= 0,
+                                    rewards_sbd=0,
+                                    rewards_vests=0, 
+                                    last_reward = '',
+                                    posts=0, 
+                                    votes=0, 
+                                    resteems=0, 
+                                    comments=0, 
+                                    pow=0 )
+                            graph.add_edge(cj['follower'],cj['following'], timestamp = op['timestamp'])
                     except KeyError:
                         pass
                     except TypeError:
@@ -92,7 +148,6 @@ def read_rewards(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                
                 reward = op['value']
                 try:
                     graph[reward['account']]['rewards_steem'] += reward['reward_steem']['amount']
@@ -184,24 +239,11 @@ def read_pow(graph):
     os.chdir('..')
     return graph
 
-@monitor_elapsed_time
-def set_attributes(graph):
-    for node in graph.nodes():
-        graph[node]['comments'] = 0
-        graph[node]['votes'] = 0
-        graph[node]['posts'] = 0
-        graph[node]['last_reward'] = ''
-        graph[node]['rewards_steem'] = 0
-        graph[node]['rewards_vests'] = 0
-        graph[node]['rewards_sbd'] = 0
-        graph[node]['pow'] = 0
-    return graph
 
 graph = nx.DiGraph()
 os.chdir('../steemit_on_nas/anonymized_data')
 graph = read_nodes(graph)
 graph = read_links(graph)
-graph = set_attributes(graph)
 graph = read_comments(graph)
 graph = read_posts(graph)
 graph = read_pow(graph)
