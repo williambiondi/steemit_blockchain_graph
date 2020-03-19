@@ -3,7 +3,8 @@ import networkx as nx
 import os
 import gzip
 import time
-import pickle 
+import pickle
+import numpy as np
 
 def monitor_elapsed_time(func):
     def wrapper(*args, **kwargs):
@@ -24,16 +25,7 @@ def read_nodes(graph):
                 op = json.loads(line.decode())
                 try:
                     graph.add_node(op['value']['new_account_name'],
-                                    creation_date = op['timestamp'],
-                                    rewards_steem= 0,
-                                    rewards_sbd=0,
-                                    rewards_vests=0, 
-                                    last_reward = '',
-                                    posts=0, 
-                                    votes=0, 
-                                    resteems=0, 
-                                    comments=0, 
-                                    pow=0 )
+                                    creation_date = op['timestamp'])
                 except KeyError:
                     pass
                                 
@@ -45,16 +37,7 @@ def read_nodes(graph):
                 op = json.loads(line.decode())
                 try:
                     graph.add_node(op['value']['new_account_name'],
-                                    creation_date = op['timestamp'],
-                                    rewards_steem= 0,
-                                    rewards_sbd=0,
-                                    rewards_vests=0, 
-                                    last_reward = '',
-                                    posts=0, 
-                                    votes=0, 
-                                    resteems=0, 
-                                    comments=0, 
-                                    pow=0 )
+                                    creation_date = op['timestamp'])
                 except KeyError:
                     pass
 
@@ -66,16 +49,7 @@ def read_nodes(graph):
                 op = json.loads(line.decode())
                 try:
                     graph.add_node(op['value']['new_account_name'],
-                                    creation_date = op['timestamp'],
-                                    rewards_steem= 0,
-                                    rewards_sbd=0,
-                                    rewards_vests=0, 
-                                    last_reward = '',
-                                    posts=0, 
-                                    votes=0, 
-                                    resteems=0, 
-                                    comments=0, 
-                                    pow=0 )
+                                    creation_date = op['timestamp'])
                 except KeyError:
                     pass
     os.chdir('..')
@@ -112,6 +86,12 @@ def read_links(graph):
 
 @monitor_elapsed_time
 def read_rewards(graph):
+    rewards = np.zeros(len(graph.order()))
+    nx.set_node_attributes(graph, 'rewards_steem', rewards)
+    nx.set_node_attributes(graph, 'rewards_sbd', rewards)
+    nx.set_node_attributes(graph, 'rewards_vests', rewards)
+    nx.set_node_attributes(graph, 'last_reward', rewards)
+    
     os.chdir('claim_reward_balance_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -132,6 +112,8 @@ def read_rewards(graph):
 
 @monitor_elapsed_time
 def read_comments(graph):
+    comments = np.zeros(len(graph.order()))
+    nx.set_node_attributes(graph, 'comments', comments)
     os.chdir('comment_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -149,6 +131,8 @@ def read_comments(graph):
 
 @monitor_elapsed_time
 def read_posts(graph):
+    posts = np.zeros(len(graph.order()))
+    nx.set_node_attributes(graph, 'posts', posts)
     os.chdir('feed_publish_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -166,6 +150,8 @@ def read_posts(graph):
 
 @monitor_elapsed_time
 def read_votes(graph):
+    votes = np.zeros(len(graph.order()))
+    nx.set_node_attributes(graph, 'votes', votes)
     os.chdir('vote_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -183,13 +169,14 @@ def read_votes(graph):
 
 @monitor_elapsed_time
 def read_pow(graph):
+    pow = np.zeros(len(graph.order()))
+    nx.set_node_attributes(graph, 'pow', pow)
     os.chdir('pow_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                
                 work = op['value']
                 try:
                     graph[work['worker_account']]['pow'] += 1
