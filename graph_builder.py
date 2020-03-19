@@ -86,12 +86,6 @@ def read_links(graph):
 
 @monitor_elapsed_time
 def read_rewards(graph):
-    rewards = np.zeros(graph.order())
-    nx.set_node_attributes(graph, 'rewards_steem', rewards)
-    nx.set_node_attributes(graph, 'rewards_sbd', rewards)
-    nx.set_node_attributes(graph, 'rewards_vests', rewards)
-    nx.set_node_attributes(graph, 'last_reward', rewards)
-    
     os.chdir('claim_reward_balance_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -112,8 +106,6 @@ def read_rewards(graph):
 
 @monitor_elapsed_time
 def read_comments(graph):
-    comments = np.zeros(graph.order())
-    nx.set_node_attributes(graph, 'comments', comments)
     os.chdir('comment_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -131,8 +123,6 @@ def read_comments(graph):
 
 @monitor_elapsed_time
 def read_posts(graph):
-    posts = np.zeros(graph.order())
-    nx.set_node_attributes(graph, 'posts', posts)
     os.chdir('feed_publish_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -150,8 +140,6 @@ def read_posts(graph):
 
 @monitor_elapsed_time
 def read_votes(graph):
-    votes = np.zeros(graph.order())
-    nx.set_node_attributes(graph, 'votes', votes)
     os.chdir('vote_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -169,8 +157,6 @@ def read_votes(graph):
 
 @monitor_elapsed_time
 def read_pow(graph):
-    pow = np.zeros(graph.order())
-    nx.set_node_attributes(graph, 'pow', pow)
     os.chdir('pow_operation')
     n_file = os.listdir(".")
     for gz in n_file:
@@ -198,10 +184,24 @@ def read_pow(graph):
     os.chdir('..')
     return graph
 
+@monitor_elapsed_time
+def set_attributes(graph):
+    for node in graph.nodes():
+        graph[node]['comments'] = 0
+        graph[node]['votes'] = 0
+        graph[node]['posts'] = 0
+        graph[node]['last_reward'] = ''
+        graph[node]['rewards_steem'] = 0
+        graph[node]['rewards_vests'] = 0
+        graph[node]['rewards_sbd'] = 0
+        graph[node]['pow'] = 0
+    return graph
+
 graph = nx.DiGraph()
 os.chdir('../steemit_on_nas/anonymized_data')
 graph = read_nodes(graph)
 graph = read_links(graph)
+graph = set_attributes(graph)
 graph = read_comments(graph)
 graph = read_posts(graph)
 graph = read_pow(graph)
