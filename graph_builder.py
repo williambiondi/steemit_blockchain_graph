@@ -34,11 +34,10 @@ def read_rewards(graph):
             for line in f:
                 op = json.loads(line.decode())
                 reward = op['value']
-                print(check_node(graph,reward['account']))
                 try:
-                    graph.nodes[reward['account']]['rewards_steem'] += reward['reward_steem']['amount']
-                    graph.nodes[reward['account']]['rewards_sbd'] += reward['reward_sbd']['amount']
-                    graph.nodes[reward['account']]['rewards_vests'] += reward['reward_vest']['amount']
+                    graph.nodes[reward['account']]['rewards_steem'] += int(reward['reward_steem']['amount'])
+                    graph.nodes[reward['account']]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
+                    graph.nodes[reward['account']]['rewards_vests'] += int(reward['reward_vest']['amount'])
                     graph.nodes[reward['account']]['last_reward'] = op['timestamp']
                 except KeyError:
                     pass
@@ -54,7 +53,6 @@ def read_comments(graph):
             for line in f:
                 op = json.loads(line.decode())
                 comment = op['value']
-                print(check_node(graph,comment['author']))
                 try:
                     graph.nodes[comment['author']]['comments'] += 1
                 except KeyError:
@@ -72,7 +70,6 @@ def read_posts(graph):
                 op = json.loads(line.decode())
                 
                 info_post = op['value']
-                print(check_node(graph,info_post['publisher']))
                 try:
                     graph.nodes[info_post['publisher']]['posts'] += 1
                 except KeyError:
@@ -90,7 +87,6 @@ def read_votes(graph):
                 op = json.loads(line.decode())
                 
                 vote = op['value']
-                print(check_node(graph,vote['voter']))
                 try:
                     graph.nodes[vote['voter']]['votes'] += 1
                 except KeyError:
@@ -107,7 +103,6 @@ def read_pow(graph):
             for line in f:
                 op = json.loads(line.decode())
                 work = op['value']
-                print(check_node(graph,work['worker_account']))
                 try:
                     graph.nodes[work['worker_account']]['pow'] += 1
                 except KeyError:
@@ -119,7 +114,6 @@ def read_pow(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                
                 work = op['value']['work']['value']['input']
                 try:
                     graph.nodes[work['worker_account']]['pow'] += 1
