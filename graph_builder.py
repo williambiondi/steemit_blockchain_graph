@@ -28,7 +28,7 @@ def read_rewards(graph):
                     #graph.nodes[reward['account']]['rewards_steem'] += int(reward['reward_steem']['amount'])
                     #graph.nodes[reward['account']]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
                     #graph.nodes[reward['account']]['rewards_vests'] += int(reward['reward_vest']['amount'])
-                    graph.nodes[reward['account']]['last_reward'] = op['timestamp']
+                    graph.nodes[reward['account']][1]['last_reward'] = op['timestamp']
                     print("New claimed reward for"+reward['acccount']+"  on: "+op['timestamp'])
                 except KeyError:
                     pass
