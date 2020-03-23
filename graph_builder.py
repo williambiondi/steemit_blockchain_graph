@@ -24,7 +24,6 @@ def read_rewards(graph):
             for line in f:
                 op = json.loads(line.decode())
                 reward = op['value']
-                print(graph.nodes[reward['account']])
                 try:
                     #graph.nodes[reward['account']]['rewards_steem'] += int(reward['reward_steem']['amount'])
                     #graph.nodes[reward['account']]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
