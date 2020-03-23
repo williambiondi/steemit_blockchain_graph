@@ -25,11 +25,11 @@ def read_rewards(graph):
                 op = json.loads(line.decode())
                 reward = op['value']
                 try:
-                    #graph.nodes[reward['account']]['rewards_steem'] += int(reward['reward_steem']['amount'])
-                    #graph.nodes[reward['account']]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
-                    #graph.nodes[reward['account']]['rewards_vests'] += int(reward['reward_vest']['amount'])
-                    graph.nodes[reward['account']][1]['last_reward'] = op['timestamp']
-                    print("New claimed reward for"+reward['acccount']+"  on: "+op['timestamp'])
+                    #graph.nodes[reward['account']][1]['rewards_steem'] += int(reward['reward_steem']['amount'])
+                    #graph.nodes[reward['account']][1]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
+                    graph.nodes[reward['account']][1]['rewards_vests'] = int(reward['reward_vests']['amount'])
+                    #graph.nodes[reward['account']][1]['last_reward'] = op['timestamp']
+                    #print("New claimed reward for"+reward['acccount']+"  on: "+op['timestamp'])
                 except KeyError:
                     pass
     os.chdir('..')
