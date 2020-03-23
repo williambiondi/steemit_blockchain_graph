@@ -15,16 +15,6 @@ def monitor_elapsed_time(func):
         return ret
     return wrapper
 
-
-
-def check_node(graph, node):
-    msg = ''
-    if node in graph.nodes:
-        msg = str(node)+' in the graph'
-    else:
-        msg = str(node)+' NOT in the graph'
-    return msg
-
 @monitor_elapsed_time
 def read_rewards(graph):
     os.chdir('claim_reward_balance_operation')
@@ -34,10 +24,11 @@ def read_rewards(graph):
             for line in f:
                 op = json.loads(line.decode())
                 reward = op['value']
+                print("New claimed reward on: "+op['timestamp'])
                 try:
-                    graph.nodes[reward['account']]['rewards_steem'] += int(reward['reward_steem']['amount'])
-                    graph.nodes[reward['account']]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
-                    graph.nodes[reward['account']]['rewards_vests'] += int(reward['reward_vest']['amount'])
+                    #graph.nodes[reward['account']]['rewards_steem'] += int(reward['reward_steem']['amount'])
+                    #graph.nodes[reward['account']]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
+                    #graph.nodes[reward['account']]['rewards_vests'] += int(reward['reward_vest']['amount'])
                     graph.nodes[reward['account']]['last_reward'] = op['timestamp']
                 except KeyError:
                     pass
@@ -125,10 +116,10 @@ def read_pow(graph):
 
 graph = nx.read_gpickle("../steemit_on_nas/blockchain_graph.gpickle")
 os.chdir('../steemit_on_nas/anonymized_data')
-graph = read_comments(graph)
-graph = read_posts(graph)
-graph = read_pow(graph)
+#graph = read_comments(graph)
+#graph = read_posts(graph)
+#graph = read_pow(graph)
 graph = read_rewards(graph)
-graph = read_votes(graph)
+#graph = read_votes(graph)
 os.chdir('..')
 nx.write_gpickle(graph, 'blockchain_graph.gpickle')
