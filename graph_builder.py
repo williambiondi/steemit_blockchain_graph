@@ -110,9 +110,10 @@ def default_posts(graph):
     return graph
 
 
-os.chdir('../steemit_on_nas/anonymized_data')
+
 print('Loading graph')
-graph = nx.read_gpickle('blockchain_graph.gpickle')
+graph = nx.read_gpickle('../steemit_on_nas/blockchain_graph.gpickle')
+os.chdir('../steemit_on_nas/anonymized_data')
 graph = default_posts(graph)
 graph = read_post_comments(graph)
 graph = read_pow(graph)
