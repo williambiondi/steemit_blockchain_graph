@@ -36,35 +36,23 @@ def read_rewards(graph):
     return graph
 
 @monitor_elapsed_time
-def read_comments(graph):
+def read_post_comments(graph):
     os.chdir('comment_operation')
     n_file = os.listdir(".")
     for gz in n_file:
         with gzip.open(gz,'rb') as f:
             for line in f:
-                op = json.loads(line.decode())
-                comment = op['value']
-                try:
-                    graph.nodes[comment['author']]['comments'] += 1
-                except KeyError:
-                    pass
-    os.chdir('..')
-    return graph
-
-@monitor_elapsed_time
-def read_posts(graph):
-    os.chdir('feed_publish_operation')
-    n_file = os.listdir(".")
-    for gz in n_file:
-        with gzip.open(gz,'rb') as f:
-            for line in f:
-                op = json.loads(line.decode())
-                
-                info_post = op['value']
-                try:
-                    graph.nodes[info_post['publisher']]['posts'] += 1
-                except KeyError:
-                    pass
+                op = json.loads(line.decode())['value']
+                if op['author'] == op['parent_author']:
+                    try:
+                        graph.nodes[op['author']]['posts'] += 1
+                    except KeyError:
+                        pass
+                else:
+                    try:
+                        graph.nodes[op['author']]['comments'] += 1
+                    except KeyError:
+                        pass
     os.chdir('..')
     return graph
 
@@ -116,10 +104,9 @@ def read_pow(graph):
 
 graph = nx.read_gpickle("../steemit_on_nas/blockchain_graph.gpickle")
 os.chdir('../steemit_on_nas/anonymized_data')
-#graph = read_comments(graph)
-#graph = read_posts(graph)
-#graph = read_pow(graph)
+graph = read_posts_comments(graph)
+graph = read_pow(graph)
 graph = read_rewards(graph)
-#graph = read_votes(graph)
+graph = read_votes(graph)
 os.chdir('..')
 nx.write_gpickle(graph, 'blockchain_graph.gpickle')
