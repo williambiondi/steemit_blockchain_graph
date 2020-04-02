@@ -16,105 +16,6 @@ def monitor_elapsed_time(func):
     return wrapper
 
 
-@monitor_elapsed_time
-def read_nodes(graph):
-    os.chdir('account_create_operation')
-    n_file = os.listdir(".")
-    for gz in n_file:
-        with gzip.open(gz, 'rb') as f:
-            for line in f:
-                op = json.loads(line.decode())
-                try:
-                    graph.add_node(op['value']['new_account_name'],
-                                   creation_date=op['timestamp'],
-                                   rewards_steem=0,
-                                   rewards_sbd=0,
-                                   rewards_vests=0,
-                                   last_reward='',
-                                   posts=0,
-                                   votes=0,
-                                   resteems=0,
-                                   comments=0,
-                                   pow=0)
-                    creation_date = op['timestamp'])
-                    except KeyError:
-                    pass
-
-    os.chdir('../account_create_with_delegation_operation')
-    n_file = os.listdir(".")
-    for gz in n_file:
-        with gzip.open(gz, 'rb') as f:
-            for line in f:
-                op = json.loads(line.decode())
-                try:
-                    graph.add_node(op['value']['new_account_name'],
-                                   creation_date=op['timestamp'],
-                                   rewards_steem=0,
-                                   rewards_sbd=0,
-                                   rewards_vests=0,
-                                   last_reward='',
-                                   posts=0,
-                                   votes=0,
-                                   resteems=0,
-                                   comments=0,
-                                   pow=0)
-                    creation_date = op['timestamp'])
-                    except KeyError:
-                    pass
-
-    os.chdir('../create_claimed_account_operation')
-    n_file = os.listdir(".")
-    for gz in n_file:
-        with gzip.open(gz, 'rb') as f:
-            for line in f:
-                op = json.loads(line.decode())
-                try:
-                    graph.add_node(op['value']['new_account_name'],
-                                   creation_date=op['timestamp'],
-                                   rewards_steem=0,
-                                   rewards_sbd=0,
-                                   rewards_vests=0,
-                                   last_reward='',
-                                   posts=0,
-                                   votes=0,
-                                   resteems=0,
-                                   comments=0,
-                                   pow=0)
-                    creation_date = op['timestamp'])
-                    except KeyError:
-                    pass
-    os.chdir('..')
-    return graph
-
-
-@monitor_elapsed_time
-def read_links(graph):
-    os.chdir('custom_json_operation')
-    n_file = os.listdir(".")
-    for gz in n_file:
-        with gzip.open(gz, 'rb') as f:
-            for line in f:
-                op = json.loads(line.decode())
-
-                if op['value']['id'] == 'follow':
-                    try:
-                        cj = json.loads(op['value']['json'])
-                    except TypeError:
-                        cj = op['value']['json']
-                    try:
-                        graph.add_edge(cj['follower'], cj['following'], timestamp=op['timestamp'])
-                    except KeyError:
-                        pass
-                    except TypeError:
-                        try:
-                            c_json = json.loads(cj[1])
-                            graph.add_edge(c_json['follower'], c_json['following'], timestamp=op['timestamp'])
-                        except:
-                            pass
-                else:
-                    continue
-    os.chdir('..')
-    return graph
 
 @monitor_elapsed_time
 def read_rewards(graph):
@@ -126,10 +27,10 @@ def read_rewards(graph):
                 op = json.loads(line.decode())
                 reward = op['value']
                 try:
-                    #graph.nodes[reward['account']][1]['rewards_steem'] += int(reward['reward_steem']['amount'])
-                    #graph.nodes[reward['account']][1]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
+                    graph.nodes[reward['account']][1]['rewards_steem'] += int(reward['reward_steem']['amount'])
+                    graph.nodes[reward['account']][1]['rewards_sbd'] += int(reward['reward_sbd']['amount'])
                     graph.nodes[reward['account']]['rewards_vests'] += int(reward['reward_vests']['amount'])
-                    #graph.nodes[reward['account']][1]['last_reward'] = op['timestamp']
+                    graph.nodes[reward['account']][1]['last_reward'] = op['timestamp']
                     #print("New claimed reward for"+reward['acccount']+"  on: "+op['timestamp'])
                 except KeyError:
                     pass
@@ -202,11 +103,16 @@ def read_pow(graph):
     os.chdir('..')
     return graph
 
+def default_posts(graph):
+    for node in graph.nodes(data=True):
+        graph.nodes[node][1]['comments'] = 0
+        graph.nodes[node][1]['posts'] = 0
+    return graph
+
 
 os.chdir('../steemit_on_nas/anonymized_data')
-graph = nx.DiGraph()
-graph = read_nodes(graph)
-graph = read_links(graph)
+graph = nx.read_gpickle('blockchain_graph.gpickle')
+graph = default_posts(graph)
 graph = read_post_comments(graph)
 graph = read_pow(graph)
 graph = read_rewards(graph)
