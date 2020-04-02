@@ -102,7 +102,7 @@ def read_pow(graph):
                     pass
     os.chdir('..')
     return graph
-
+@monitor_elapsed_time
 def default_posts(graph):
     for node in graph.nodes(data=True):
         graph.nodes[node][1]['comments'] = 0
@@ -111,6 +111,7 @@ def default_posts(graph):
 
 
 os.chdir('../steemit_on_nas/anonymized_data')
+print('Loading graph')
 graph = nx.read_gpickle('blockchain_graph.gpickle')
 graph = default_posts(graph)
 graph = read_post_comments(graph)
