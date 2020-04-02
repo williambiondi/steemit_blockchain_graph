@@ -105,8 +105,8 @@ def read_pow(graph):
 @monitor_elapsed_time
 def default_posts(graph):
     for node in graph.nodes(data=True):
-        graph.nodes[node][1]['comments'] = 0
-        graph.nodes[node][1]['posts'] = 0
+        graph.nodes[node[0]]['comments'] = 0
+        graph.nodes[node[0]]['posts'] = 0
     return graph
 
 
