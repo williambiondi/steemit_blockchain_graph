@@ -102,7 +102,6 @@ def read_pow(graph):
     return graph
 
 
-graph = nx.read_gpickle("../steemit_on_nas/blockchain_graph.gpickle")
 os.chdir('../steemit_on_nas/anonymized_data')
 graph = read_posts_comments(graph)
 graph = read_pow(graph)
