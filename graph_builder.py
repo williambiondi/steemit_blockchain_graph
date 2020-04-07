@@ -66,10 +66,10 @@ def read_votes(graph):
         with gzip.open(gz,'rb') as f:
             for line in f:
                 op = json.loads(line.decode())
-                
                 vote = op['value']
                 try:
-                    graph.nodes[vote['voter']]['votes'] += 1
+                    graph.nodes[vote['author']]['votes_received'] +=1
+                    graph.nodes[vote['voter']]['votes_given'] += 1
                 except KeyError:
                     pass
     os.chdir('..')
@@ -103,10 +103,12 @@ def read_pow(graph):
     os.chdir('..')
     return graph
 @monitor_elapsed_time
-def default_posts(graph):
+def default(graph):
     for node in graph.nodes(data=True):
-        graph.nodes[node[0]]['comments'] = 0
-        graph.nodes[node[0]]['posts'] = 0
+        #graph.nodes[node[0]]['comments'] = 0
+        #graph.nodes[node[0]]['posts'] = 0
+        graph.nodes[node[0]]['votes_given'] = 0
+        graph.nodes[node[0]]['votes_received'] =0
     return graph
 
 
@@ -114,10 +116,10 @@ def default_posts(graph):
 print('Loading graph')
 graph = nx.read_gpickle('../steemit_on_nas/blockchain_graph.gpickle')
 os.chdir('../steemit_on_nas/anonymized_data')
-graph = default_posts(graph)
-graph = read_post_comments(graph)
+graph = default(graph)
+#graph = read_post_comments(graph)
 #graph = read_pow(graph)
 #graph = read_rewards(graph)
-#graph = read_votes(graph)
+graph = read_votes(graph)
 os.chdir('..')
 nx.write_gpickle(graph, 'blockchain_graph.gpickle')
